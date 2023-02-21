@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  flutterapp:
+    container_name: flutterenv
+    build:
+      context: .
+      dockerfile: Dockerfile
