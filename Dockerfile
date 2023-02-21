@@ -21,7 +21,7 @@ ENV PATH="$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$
 # install all dependencies
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt-get update \
-  && apt-get install --yes --no-install-recommends openjdk-$JAVA_VERSION-jdk curl unzip sed git bash xz-utils libglvnd0 ssh xauth x11-xserver-utils libpulse0 libxcomposite1 libgl1-mesa-glx sudo \
+  && apt-get install --yes --no-install-recommends openjdk-$JAVA_VERSION-jdk curl ss netstat unzip sed git bash xz-utils libglvnd0 ssh xauth x11-xserver-utils libpulse0 libxcomposite1 libgl1-mesa-glx sudo \
   && rm -rf /var/lib/{apt,dpkg,cache,log}
 
 # create user
@@ -61,7 +61,14 @@ RUN curl -o flutter.tar.xz $FLUTTER_URL \
   && flutter emulators --create \
   && flutter update-packages
 
+# Open Port
+
+EXPOSE 5555
+RUN adb tcpip 5555 \
+  && adb connect host.docker.internal:5555
+
 COPY entrypoint.sh /usr/local/bin/
 COPY chown.sh /usr/local/bin/
 COPY flutter-android-emulator.sh /usr/local/bin/flutter-android-emulator
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+EXPOSE 5555
